@@ -349,9 +349,20 @@ class BLEDeviceConnection @RequiresPermission("PERMISSION_BLUETOOTH_CONNECT") co
 
             GlobalScope.launch (Dispatchers.Main) {
                 delay(1000)
-                val characteristic = service?.getCharacteristic(characteristicUUID)
+
+                var characteristic: BluetoothGattCharacteristic? = null
+
+                while (characteristic == null) {
+                    characteristic = service?.getCharacteristic(characteristicUUID)
+                    delay(1000)
+
+                }
 
                 val notifyRegistered = setCharacteristicNotification(gatt, characteristic!!, true)
+                /*
+                val characteristic = service?.getCharacteristic(characteristicUUID)
+
+                val notifyRegistered = setCharacteristicNotification(gatt, characteristic!!, true)*/
                 Log.d("GATT-READ", "$notifyRegistered")
 
                 delay(1000) // attendo approssimativamente 1s perché è necessario attendere che la write di setCharacteristicNotification() sia stata fatta prima di fare una altra write. per gestire meglio la cosa sarebbe stato opportuno usare meccanismi di sincronizzazione, cioe far partire il prossimo blocco di codice solo una volta che viene chiamata la callback del precedente blocco di codice
@@ -621,7 +632,7 @@ fun decodeHexToUtf8(hexString: String): String {
     }
 
     // Inverte l'ordine dei byte per little endian
-    byteArray.reverse()
+    //byteArray.reverse()
 
     // Decodifica l'array di byte UTF-8 in una stringa
     return byteArray.toString(Charsets.UTF_8)
