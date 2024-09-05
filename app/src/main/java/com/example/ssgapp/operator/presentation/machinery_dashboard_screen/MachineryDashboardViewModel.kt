@@ -190,6 +190,10 @@ class MachineryDashboardViewModel @Inject constructor(
     // Per callback per ottenere RSSI da classe BLEDeviceConnection
     private fun observeRssiValue() {
         if (true) { // TODO: questo codice non va eseguito se si guidano macchinari da remoto!
+
+
+            var isDistanceAlarmSent = false
+
             viewModelScope.launch {
 
 
@@ -211,21 +215,26 @@ class MachineryDashboardViewModel @Inject constructor(
                             if (uiState.value.activeDevice?.address == "E4:5F:01:5F:5B:3F" && meanRssiValue() < -24) {
                                 // Lancio allarme Worker Away
                                 Log.d("GATT", "Worker away!!!")
-                                sendMQTTAlarm()
                                 sendNotification()
+                                if (isDistanceAlarmSent == false) {
+                                    isDistanceAlarmSent = true
+                                    sendMQTTAlarm()
+                                }
                             } else if (meanRssiValue() < -80) { // -80 per l'iphone, -24 per il raspberry tramite la formula
                                 // Lancio allarme Worker Away
                                 Log.d("GATT", "Worker away!!!")
-                                sendMQTTAlarm()
                                 sendNotification()
-                            }
+                                if (isDistanceAlarmSent == false) {
+                                    isDistanceAlarmSent = true
+                                    sendMQTTAlarm()
+                                }
+                            } else isDistanceAlarmSent = false
                             activeConnection.value?.readRssiValue()
                         }
                         delay(500)
                     }
                 }
                 activeConnection.value?.readRssiValue()
-
             }
         }
 
