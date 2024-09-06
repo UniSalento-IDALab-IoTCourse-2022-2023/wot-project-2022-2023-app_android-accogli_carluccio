@@ -632,9 +632,9 @@ fun decodeHexToUtf8(hexString: String): String {
     }
 
     // Inverte l'ordine dei byte per little endian
-    //byteArray.reverse()
+    byteArray.reverse()
 
     // Decodifica l'array di byte UTF-8 in una stringa
-    return byteArray.toString(Charsets.UTF_8)
+    return byteArray.toString(Charsets.UTF_8).reversed()
 }
 
